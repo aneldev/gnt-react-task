@@ -4,6 +4,10 @@ A React application built as a technical assessment. It demonstrates three reusa
 
 ---
 
+![img.png](app-screenshot.png)
+
+---
+
 ## Installation
 
 > Requires **Node v22** and **pnpm**.
