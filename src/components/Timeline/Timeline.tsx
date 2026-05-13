@@ -18,22 +18,31 @@ import {Day} from "./components/Day";
 import {KbHint} from "./components/KbHint";
 
 export interface ITimelineProps<TEvent extends ITimelineDataBase> {
+  /** Events to render. Only events whose date range overlaps the viewport are shown. */
   events: TEvent[];
 
+  /** First day of the visible range, inclusive. Format: `YYYY-MM-DD`. */
   viewportStart: TLocalDate;
+  /** Last day of the visible range, inclusive. Format: `YYYY-MM-DD`. */
   viewportEnd: TLocalDate;
 
+  /** Custom renderer for the day header. Receives the local date and a pre-formatted label string. */
   renderDayHeader?: (args: {
     day: TLocalDate;
     dayLabel: string;
   }) => React.ReactNode;
 
+  /** Renders an individual event card. `starts` and `ends` indicate whether the event spans beyond the current day — use them to visually clip card edges. */
   renderEvent: TRenderEvent<TEvent>;
+  /** Returns the accessible label announced to screen readers when an event is focused or selected. */
   getAriaLabel: (event: TEvent) => string;
 
+  /** Hides the keyboard hint bar and disables arrow-key navigation. Use in read-only embeds where keyboard focus should not be captured by the timeline. */
   disableKeyboardNavigation?: boolean;
 
+  /** Called when the user clicks a day header. */
   onDayClick?: (day: TLocalDate) => void;
+  /** Called when an event is clicked or activated via the Enter key. */
   onEventClick?: (eventId: string, day: TLocalDate) => void;
 }
 

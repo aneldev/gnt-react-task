@@ -19,49 +19,54 @@ import {ValueViewer} from "./components/ValueViewer";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export interface IFormProps<TData extends TObject> {
+  /** Controls the HTTP verb and button labels. `"create"` calls `onApiPost`; `"edit"` calls `onApiPut` and shows the Delete button. */
   mode:
     | "create"
     | "edit";
 
-  /**
-   * Specify if the form is in a modal container to show success and close buttons when needed.
-   */
+  /** Set when the form is rendered inside a modal — shows Close and success-state buttons at the right times. */
   isModal?: boolean;
 
+  /** Field-level validators. Each function receives the field value and full form data; return an error message or an empty string when valid. */
   validationRules?: Partial<Record<keyof TData, (value: TData[keyof TData], data: TData) => string>>;
 
   /**
-   * Show a big green checkmark after a successful save/delete
+   * Show a big green checkmark after a successful save/delete.
    * @default true
    */
   showSuccess?: boolean;
 
-  /**
-   * Change this value to reset the form: reloads data and clears all state
-   */
+  /** Change this value to reset the form: reloads data and clears all state. */
   restartId?: string;
 
-  /**
-   * Called on mount (and on restartId change) to load initial form data
-   */
+  /** Called on mount (and on `restartId` change) to load initial form data. */
   loadData: () => Promise<TData>;
 
+  /** Render prop that receives the form API — use it to declare fields and watchers. */
   children: (formApi: IFormApi<TData>) => React.ReactNode;
 
+  /** Called on submit in `"create"` mode. May return updated data to replace the local state. */
   onApiPost?: (data: TData) => Promise<TData | void>;
+  /** Called on submit in `"edit"` mode. May return updated data to replace the local state. */
   onApiPut?: (data: TData) => Promise<TData | void>;
+  /** Enables the Delete button in `"edit"` mode. Called after the user confirms the deletion dialog. */
   onApiDelete?: (data: TData) => Promise<void>;
 
+  /** Called after the user confirms discarding unsaved changes. Typically closes the form or navigates away. */
   onCancel?: () => void;
+  /** Called when the user closes the form without pending changes, e.g. via the Close button in a modal. */
   onClose?: () => void;
 }
 
 export interface IFormApi<TData extends TObject> {
+  /** `true` when any field value differs from the loaded data. */
   isDirty: boolean;
+  /** Registers a controlled field. Spread the received `IFieldProps` onto the MUI input component. */
   input: <K extends keyof TData>(
     name: K,
     render: (props: IFieldProps<TData, K>) => React.ReactNode,
   ) => React.ReactNode;
+  /** Subscribes a render function to a field's live value without registering an input. Use for conditional UI that reacts to another field's value. */
   watch: <K extends keyof TData>(
     name: K,
     render: (value: TData[K]) => React.ReactNode,
@@ -69,18 +74,27 @@ export interface IFormApi<TData extends TObject> {
 }
 
 export interface IFieldProps<TData extends TObject, K extends keyof TData = keyof TData> {
+  /** Forwarded to the underlying `<input>` element for programmatic focus management. */
   ref: React.RefObject<HTMLInputElement | null>;
+  /** The field key within `TData`. */
   name: K;
+  /** The current field value. */
   value: TData[K];
+  /** `true` while the form is saving or after a successful save. */
   disabled: boolean;
+  /** `true` when a validation rule is defined for this field. */
   required: boolean;
+  /** `true` when the field has a validation error. */
   error: boolean;
+  /** The current validation error message; empty string when valid. */
   helperText: string;
+  /** Accepts a native change event or the new value directly — use the value form for custom inputs such as date pickers. */
   onChange: (
     eventOrValue:
       | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | TData[K],
   ) => void;
+  /** Triggers per-field validation. Wire to the input's `onBlur` handler. */
   onBlur: () => void;
 }
 

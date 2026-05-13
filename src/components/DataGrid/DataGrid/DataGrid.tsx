@@ -43,17 +43,28 @@ import type {IDataGridColumn} from "./types";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 
 export interface IDataGridProps<TData extends TObject> {
+  /** MUI `sx` override applied to the root container. */
   sx?: SxProps<Theme>;
 
+  /** Column definitions controlling visibility, sorting, filtering, and cell rendering. */
   columns: IDataGridColumn<TData>[];
+  /** Data rows to display. Filtering, sorting, and pagination operate client-side on this array. */
   rows: TData[];
 
+  /** Replaces the table with a centered spinner while data is being fetched. */
   loading?: boolean;
+  /** Replaces the table with an error alert. Pass `null` to clear. */
   error?: string | null;
 
+  /**
+   * Number of rows per page on first render.
+   * @default 30
+   */
   defaultPageSize?: number;
 
+  /** Returns a stable React key for each row — required for correct reconciliation during sort and filter. */
   getRowKey: (row: TData, index: number) => React.Key;
+  /** Called when the user clicks a data row. Use to open a detail view or trigger an action. */
   onRowClick?: (row: TData) => void;
 }
 
