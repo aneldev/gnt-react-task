@@ -1,0 +1,3 @@
+export {
+  GlobalScrollbars,
+} from "./GlobalScrollbars";
